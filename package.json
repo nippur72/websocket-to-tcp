@@ -1,0 +1,24 @@
+{
+  "name": "websocket-to-tcp",
+  "version": "0.0.1",
+  "description": "Websocket to TCP tunnel",
+  "main": "wstcp.js",
+  "bin": {
+    "wstcp": "./wstcp.js"
+  },
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "websocket": "^1.0.32"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "websocket",
+    "tcp",
+    "tunnel"
+  ],
+  "author": "Antonino Porcino <nino.porcino@gmail.com>",
+  "license": "MIT"
+}
