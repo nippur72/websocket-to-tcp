@@ -14,14 +14,16 @@ function getOptions() {
         { name: 'tcpaddress', alias: 't', type: String },
         { name: 'port'      , alias: 'p', type: Number },
         { name: 'wsport'    , alias: 'w', type: Number },
-        { name: 'name'      , alias: 'n', type: String }
+        { name: 'name'      , alias: 'n', type: String },
+        { name: 'key'  , type: String },
+        { name: 'cert' , type: String }
     ]);
 
     if(options.tcpaddress === undefined ||
        options.port === undefined ||
        options.wsport === undefined ||
        options.name === undefined) {
-        console.log("Usage: wstcp -t tcpaddress -p tcpport -w wsport -n name");
+        console.log("Usage: wstcp -t tcpaddress -p tcpport -w wsport -n name [--key key.pem --cert cert.pem]");
         process.exit(0);
     }
 

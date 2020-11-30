@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
-let net = require('net');
-let http = require('http');
-let WebSocketServer = require("websocket").server;
-let getOptions = require("./options");
+const fs = require('fs');
+const net = require('net');
+const http = require('http');
+const https = require('https');
+const WebSocketServer = require("websocket").server;
+const getOptions = require("./options");
 
 options = getOptions();
 
@@ -21,11 +23,27 @@ function createTcpSocket(ondata, onerror, ontimeout, onclose, onconnect, onready
 	return socket;
 }
 
-let server = http.createServer(function(request, response) {
+let handle_request = function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
     response.writeHead(404);
     response.end();
-});
+};
+
+let server;
+
+if(options.key === undefined || options.cert === undefined) {
+	// HTTP server
+	console.log("Creating HTTP server...");
+	server = http.createServer(handle_request);
+}
+else {
+	const config = {
+		key: fs.readFileSync(options.key),
+		cert: fs.readFileSync(options.cert)
+	};
+	console.log("Creating HTTPS server...");
+	server = https.createServer(config, handle_request);
+}
 
 server.listen(options.wsport, function() {
     console.log(`${new Date()} Server is listening on port ${options.wsport} protocol "${options.name}"`);
