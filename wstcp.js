@@ -61,11 +61,21 @@ wsServer.on('request', function(request) {
 	if(!originIsAllowed(request.origin)) {
 	    // Make sure we only accept requests from an allowed origin
 		request.reject();
-		console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+		console.log(`${new Date()} Connection from origin ${request.origin} rejected.`);
 		return;
 	}
 
-	let ws_connection = request.accept(options.name, request.origin);
+	let ws_connection;
+
+	try {
+		ws_connection = request.accept(options.name, request.origin);
+	}
+	catch(err) {
+		// wrong protocol or other error
+		console.log(`${new Date()} ${err.message}`);
+		return;
+	}
+
 	console.log(`${new Date()} connection accepted from ${request.origin}`);
 
 	let TCP_state = DISCONNECTED;
