@@ -116,7 +116,7 @@ wsServer.on('request', function(request) {
 
 	ws_connection.on('close', function(reasonCode, description) {
 		if(TCP_state == CONNECTED) {
-			socket.end();
+			socket.destroy();
 		}
 		console.log(`${new Date()} peer ${ws_connection.remoteAddress} disconnected`);
 	});
