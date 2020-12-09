@@ -22,7 +22,7 @@ function getOptions() {
     ]);
 
     if(options.connlist === undefined) {
-        console.log("Usage: wstcpm -l tcpaddress,tcpport,wsport,name,key,cert ...");
+        console.log("Usage: wstcpm -l tcpaddress,tcpport,wsport,name,key,cert [...]");
         process.exit(0);
     }
 
@@ -36,8 +36,4 @@ options.connlist.forEach(conn=>{
     console.log(`Creating multiple connection: ${conn}`);
     createWsTunnel(tcpaddress,port,wsport,name,key,cert);
 });
-
-
-
-
 
