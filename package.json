@@ -1,6 +1,6 @@
 {
   "name": "websocket-to-tcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Websocket to TCP tunnel",
   "main": "wstcp.js",
   "bin": {
@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node multiple -l bbs.sblendorio.eu,6510,8080,bbs bbs.sblendorio.eu,6510,8081,bbs"
   },
   "keywords": [
     "websocket",

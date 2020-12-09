@@ -54,80 +54,80 @@ function createHTTPxServer(wsport,name,key,cert) {
 
 // handles a WebSocket connection request
 //
-function handleWsRequest(request) {
-	function originIsAllowed(origin) {
-		// put logic here to detect whether the specified origin is allowed.
-		return true;
-	}
-
-	if(!originIsAllowed(request.origin)) {
-		// Make sure we only accept requests from an allowed origin
-		request.reject();
-		console.log(`${new Date()} Connection from origin ${request.origin} rejected.`);
-		return;
-	}
-
-	let ws_connection;
-
-	try {
-		ws_connection = request.accept(options.name, request.origin);
-	}
-	catch(err) {
-		// wrong protocol or other error
-		console.log(`${new Date()} ${err.message}`);
-		return;
-	}
-
-	console.log(`${new Date()} connection accepted from ${request.origin}`);
-
-	let TCP_state = DISCONNECTED;
-
-	let ondata = (data) => ws_connection.sendBytes(data);
-
-	let onerror = (error)=> console.log(`${new Date()} TCP error: ${error}`);
-
-	let ontimeout = ()=> console.log(`${new Date()} TCP timeout`);
-
-	let onclose = () => {
-		TCP_state = DISCONNECTED;
-		ws_connection.close();
-		console.log(`${new Date()} TCP connection closed`);
-	};
-
-	let onconnect = () => console.log(`${new Date()} TCP connection established`);
-
-	let onready = () => {
-		TCP_state = CONNECTED;
-		console.log(`${new Date()} TCP ready`);
-	};
-
-	let socket = new createTcpSocket(ondata, onerror, ontimeout, onclose, onconnect, onready);
-	socket.connect(options.port, options.tcpaddress);
-
-	ws_connection.on('message', function(message) {
-		if(message.type === 'binary') {
-			if(TCP_state == CONNECTED) {
-				socket.write(message.binaryData);
-			}
-			else {
-				console.log(`${new Date()} can't send to TCP: not yet connected`);
-			}
-		}
-		else console.log(`${new Date()} invalid message type "${message.type}"`);
-	});
-
-	ws_connection.on('close', function(reasonCode, description) {
-		if(TCP_state == CONNECTED) {
-			socket.destroy();
-		}
-		console.log(`${new Date()} peer ${ws_connection.remoteAddress} disconnected`);
-	});
-}
 
 function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
 	let server = createHTTPxServer(wsport,name,key,cert);
 	wsServer = new WebSocketServer({httpServer: server, autoAcceptConnections: false});
-	wsServer.on('request', handleWsRequest);
+
+	wsServer.on('request', function(request) {
+		function originIsAllowed(origin) {
+			// put logic here to detect whether the specified origin is allowed.
+			return true;
+		}
+
+		if(!originIsAllowed(request.origin)) {
+			// Make sure we only accept requests from an allowed origin
+			request.reject();
+			console.log(`${new Date()} Connection from origin ${request.origin} rejected.`);
+			return;
+		}
+
+		let ws_connection;
+
+		try {
+			ws_connection = request.accept(name, request.origin);
+		}
+		catch(err) {
+			// wrong protocol or other error
+			console.log(`${new Date()} ${err.message}`);
+			return;
+		}
+
+		console.log(`${new Date()} connection accepted from ${request.origin}`);
+
+		let TCP_state = DISCONNECTED;
+
+		let ondata = (data) => ws_connection.sendBytes(data);
+
+		let onerror = (error)=> console.log(`${new Date()} TCP error: ${error}`);
+
+		let ontimeout = ()=> console.log(`${new Date()} TCP timeout`);
+
+		let onclose = () => {
+			TCP_state = DISCONNECTED;
+			ws_connection.close();
+			console.log(`${new Date()} TCP connection closed`);
+		};
+
+		let onconnect = () => console.log(`${new Date()} TCP connection established`);
+
+		let onready = () => {
+			TCP_state = CONNECTED;
+			console.log(`${new Date()} TCP ready`);
+		};
+
+		let socket = new createTcpSocket(ondata, onerror, ontimeout, onclose, onconnect, onready);
+		socket.connect(port, tcpaddress);
+
+		ws_connection.on('message', function(message) {
+			if(message.type === 'binary') {
+				if(TCP_state == CONNECTED) {
+					socket.write(message.binaryData);
+				}
+				else {
+					console.log(`${new Date()} can't send to TCP: not yet connected`);
+				}
+			}
+			else console.log(`${new Date()} invalid message type "${message.type}"`);
+		});
+
+		ws_connection.on('close', function(reasonCode, description) {
+			if(TCP_state == CONNECTED) {
+				socket.destroy();
+			}
+			console.log(`${new Date()} peer ${ws_connection.remoteAddress} disconnected`);
+		});
+	});
 }
 
 module.exports = createWsTunnel;
