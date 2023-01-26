@@ -56,6 +56,10 @@ function createHTTPxServer(wsport,key,cert) {
 //
 
 function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
+
+	// make name parameter optional (null when optional)
+	if(name === undefined || name === "") name = null;
+
 	let server = createHTTPxServer(wsport,key,cert);
 	wsServer = new WebSocketServer({httpServer: server, autoAcceptConnections: false});
 
@@ -75,7 +79,7 @@ function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
 		let ws_connection;
 
 		try {
-			ws_connection = request.accept(name === undefined ? null : name, request.origin);
+			ws_connection = request.accept(name, request.origin);
 		}
 		catch(err) {
 			// wrong protocol or other error
