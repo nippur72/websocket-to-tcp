@@ -10,24 +10,23 @@ function parseOptions(optionDefinitions) {
  }
 
 function getOptions() {
-    const options = parseOptions([
-        { name: 'tcpaddress', alias: 't', type: String },
-        { name: 'port'      , alias: 'p', type: Number },
-        { name: 'wsport'    , alias: 'w', type: Number },
-        { name: 'name'      , alias: 'n', type: String },
-        { name: 'key'  , type: String },
-        { name: 'cert' , type: String }
-    ]);
+   const options = parseOptions([
+      { name: 'tcpaddress', alias: 't', type: String },
+      { name: 'port'      , alias: 'p', type: Number },
+      { name: 'wsport'    , alias: 'w', type: Number },
+      { name: 'name'      , alias: 'n', type: String },
+      { name: 'key'  , type: String },
+      { name: 'cert' , type: String }
+   ]);
 
-    if(options.tcpaddress === undefined ||
-       options.port === undefined ||
-       options.wsport === undefined ||
-       options.name === undefined) {
-        console.log("Usage: wstcp -t tcpaddress -p tcpport -w wsport -n name [--key key.pem --cert cert.pem]");
-        process.exit(0);
-    }
+   if(options.tcpaddress === undefined ||
+      options.port === undefined ||
+      options.wsport === undefined) {
+         console.log("Usage: wstcp -t tcpaddress -p tcpport -w wsport [-n name] [--key key.pem --cert cert.pem]");
+         process.exit(0);
+   }
 
-    return options;
+   return options;
 }
 
 module.exports = getOptions;

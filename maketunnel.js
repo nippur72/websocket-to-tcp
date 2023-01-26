@@ -28,7 +28,7 @@ function handle_http_request(request, response) {
 
 // create a listening HTTP or HTTPS server on the port wsport
 //
-function createHTTPxServer(wsport,name,key,cert) {
+function createHTTPxServer(wsport,key,cert) {
 	let server;
 
 	if(key === undefined || cert === undefined) {
@@ -46,7 +46,7 @@ function createHTTPxServer(wsport,name,key,cert) {
 	}
 
 	server.listen(wsport, function() {
-		console.log(`${new Date()} Server is listening on port ${wsport} protocol "${name}"`);
+		console.log(`${new Date()} Server is listening on port ${wsport}`);
 	});
 
 	return server;
@@ -56,7 +56,7 @@ function createHTTPxServer(wsport,name,key,cert) {
 //
 
 function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
-	let server = createHTTPxServer(wsport,name,key,cert);
+	let server = createHTTPxServer(wsport,key,cert);
 	wsServer = new WebSocketServer({httpServer: server, autoAcceptConnections: false});
 
 	wsServer.on('request', function(request) {
@@ -75,7 +75,7 @@ function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
 		let ws_connection;
 
 		try {
-			ws_connection = request.accept(name, request.origin);
+			ws_connection = request.accept(name === undefined ? null : name, request.origin);
 		}
 		catch(err) {
 			// wrong protocol or other error
