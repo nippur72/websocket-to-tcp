@@ -15,13 +15,14 @@ can be called from the command line interface with `wstcp`.
 # Usage
 
 ```
-wstcp -t tcpaddress -p tcpport -w wsport [-n name] [--key key.pem --cert cert.pem]
+wstcp -t tcpaddress -p tcpport -w wsport [-n name] [--usestrings] [--key key.pem --cert cert.pem]
 ```
 
 tcpaddress is the address of the remote TCP connection
 tcpport    is the port number of the remote TCP connection
 wsport     the websocket listening local port number
 name       (optional) the name of websocket sub-protocol
+usestrings (optional) send data as strings instead of binary bytes (needed for some WebSocket servers)
 key        (optional) specifies the key file for a WSS:// secure connection
 cert       (optional) specifies the certificate file for a WSS:// secure connection
 # Example

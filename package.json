@@ -1,6 +1,6 @@
 {
   "name": "websocket-to-tcp",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "Websocket to TCP tunnel",
   "main": "wstcp.js",
   "bin": {

@@ -3,6 +3,6 @@
 const getOptions = require("./options");
 const createWsTunnel = require("./maketunnel");
 
-options = getOptions();
+let { tcpaddress,port,wsport,usestrings,name,key,cert } = getOptions();
 
-createWsTunnel(options.tcpaddress,options.port,options.wsport,options.name,options.key,options.cert);
+createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert);

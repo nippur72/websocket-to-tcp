@@ -17,23 +17,24 @@ function parseOptions(optionDefinitions) {
  }
 
 function getOptions() {
-    const options = parseOptions([
-        { name: 'connlist'  , alias: 'l', type: String, multiple: true }
-    ]);
+   const options = parseOptions([
+      { name: 'connlist'  , alias: 'l', type: String, multiple: true }
+   ]);
 
-    if(options.connlist === undefined) {
-        console.log("Usage: wstcpm -l tcpaddress,tcpport,wsport,name,key,cert [...]");
-        process.exit(0);
-    }
+   if(options.connlist === undefined) {
+      console.log("Usage: wstcpm -l tcpaddress,tcpport,wsport,usestrings,name,key,cert [...]");
+      process.exit(0);
+   }
 
-    return options;
+   return options;
 }
 
 options = getOptions();
 
 options.connlist.forEach(conn=>{
-    let [tcpaddress,port,wsport,name,key,cert] = conn.split(",");
-    console.log(`Creating multiple connection: ${conn}`);
-    createWsTunnel(tcpaddress,port,wsport,name,key,cert);
+   let [tcpaddress,port,wsport,usestrings,name,key,cert] = conn.split(",");
+   console.log(`Creating multiple connection: ${conn}`);
+   usestrings = usestrings === "true";
+   createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert);
 });
 

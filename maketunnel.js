@@ -55,7 +55,7 @@ function createHTTPxServer(wsport,key,cert) {
 // handles a WebSocket connection request
 //
 
-function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
+function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
 
 	// make name parameter optional (null when optional)
 	if(name === undefined || name === "") name = null;
@@ -91,7 +91,10 @@ function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
 
 		let TCP_state = DISCONNECTED;
 
-		let ondata = (data) => ws_connection.sendBytes(data);
+		let ondata = (data) => {
+         if(usestrings) ws_connection.send(data.toString());  
+         else ws_connection.sendBytes(data);
+      }
 
 		let onerror = (error)=> console.log(`${new Date()} TCP error: ${error}`);
 
@@ -114,16 +117,14 @@ function createWsTunnel(tcpaddress,port,wsport,name,key,cert) {
 		socket.connect(port, tcpaddress);
 
 		ws_connection.on('message', function(message) {
-			if(message.type === 'binary') {
-				if(TCP_state == CONNECTED) {
-					socket.write(message.binaryData);
-				}
-				else {
-					console.log(`${new Date()} can't send to TCP: not yet connected`);
-				}
-			}
-			else console.log(`${new Date()} invalid message type "${message.type}"`);
-		});
+         if(TCP_state == CONNECTED) {
+            if(message.type === 'binary') socket.write(message.binaryData);                           
+            else                          socket.write(message.utf8Data);     // defaults to UTF-8       
+         }
+         else {
+            console.log(`${new Date()} can't send to TCP: not yet connected`);
+         }
+   });
 
 		ws_connection.on('close', function(reasonCode, description) {
 			if(TCP_state == CONNECTED) {
