@@ -5,6 +5,7 @@ const net = require('net');
 const http = require('http');
 const https = require('https');
 const WebSocketServer = require("websocket").server;
+const sleep = require("./sleep");
 
 const DISCONNECTED = 0;
 const CONNECTED = 1;
@@ -33,16 +34,25 @@ function createHTTPxServer(wsport,key,cert) {
 
 	if(key === undefined || cert === undefined) {
 		// HTTP server
-		console.log("Creating HTTP server...");
+		console.log(`${new Date()} Creating HTTP server...`);
 		server = http.createServer(handle_http_request);
 	}
 	else {
-		const config = {
-			key: fs.readFileSync(key),
-			cert: fs.readFileSync(cert)
-		};
-		console.log("Creating HTTPS server...");
-		server = https.createServer(config, handle_http_request);
+		function readCertsSync() {
+			return {
+				 key: fs.readFileSync(key),
+				 cert: fs.readFileSync(cert)
+			}
+	   }
+		console.log(`${new Date()} Creating HTTPS server...`);
+		server = https.createServer(readCertsSync, handle_http_request);
+
+		// watches for changes in the certificate updating server's context
+		fs.watch(cert, async () => {
+			await sleep(1000);
+		   server.setSecureContext(readCertsSync());
+			console.log(`${new Date()} New SSL certificate file acquired`);
+  	   });
 	}
 
 	server.listen(wsport, function() {
