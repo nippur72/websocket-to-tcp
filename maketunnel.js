@@ -21,8 +21,14 @@ function createTcpSocket(ondata, onerror, ontimeout, onclose, onconnect, onready
 	return socket;
 }
 
+/**
+ *  Cancels all HTTP requests by returning 404
+ *  @param {http.IncomingMessage} request the HTTP request
+ *  @param {http.ServerResponse} response the HTTP response
+ *  @returns {void}
+ */
 function handle_http_request(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
+    console.log(`${new Date().toUTCString()} [${request.socket.remoteAddress}] requested ${request.url}`);
     response.writeHead(404);
     response.end();
 }
