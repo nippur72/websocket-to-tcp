@@ -51,7 +51,7 @@ function createHTTPxServer(wsport,key,cert) {
 			}
 	   }
 		console.log(`${new Date().toUTCString()} Creating HTTPS server...`);
-		server = https.createServer(readCertsSync, handle_http_request);
+		server = https.createServer(readCertsSync(), handle_http_request);
 
 		// watches for changes in the certificate updating server's context
 		fs.watch(cert, async () => {
