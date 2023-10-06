@@ -34,7 +34,7 @@ function createHTTPxServer(wsport,key,cert) {
 
 	if(key === undefined || cert === undefined) {
 		// HTTP server
-		console.log(`${new Date()} Creating HTTP server...`);
+		console.log(`${new Date().toUTCString()} Creating HTTP server...`);
 		server = http.createServer(handle_http_request);
 	}
 	else {
@@ -44,19 +44,19 @@ function createHTTPxServer(wsport,key,cert) {
 				 cert: fs.readFileSync(cert)
 			}
 	   }
-		console.log(`${new Date()} Creating HTTPS server...`);
+		console.log(`${new Date().toUTCString()} Creating HTTPS server...`);
 		server = https.createServer(readCertsSync, handle_http_request);
 
 		// watches for changes in the certificate updating server's context
 		fs.watch(cert, async () => {
 			await sleep(1000);
 		   server.setSecureContext(readCertsSync());
-			console.log(`${new Date()} New SSL certificate file acquired`);
+			console.log(`${new Date().toUTCString()} New SSL certificate file acquired`);
   	   });
 	}
 
 	server.listen(wsport, function() {
-		console.log(`${new Date()} Server is listening on port ${wsport}`);
+		console.log(`${new Date().toUTCString()} Server is listening on port ${wsport}`);
 	});
 
 	return server;
@@ -82,7 +82,7 @@ function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
 		if(!originIsAllowed(request.origin)) {
 			// Make sure we only accept requests from an allowed origin
 			request.reject();
-			console.log(`${new Date()} Connection from origin ${request.origin} rejected.`);
+			console.log(`${new Date().toUTCString()} Connection from origin ${request.origin} rejected.`);
 			return;
 		}
 
@@ -97,7 +97,7 @@ function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
 			return;
 		}
 
-		console.log(`${new Date()} connection accepted from ${request.origin}`);
+		console.log(`${new Date().toUTCString()} connection accepted from ${request.origin}`);
 
 		let TCP_state = DISCONNECTED;
 
@@ -106,21 +106,21 @@ function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
          else ws_connection.sendBytes(data);
       }
 
-		let onerror = (error)=> console.log(`${new Date()} TCP error: ${error}`);
+		let onerror = (error)=> console.log(`${new Date().toUTCString()} TCP error: ${error}`);
 
-		let ontimeout = ()=> console.log(`${new Date()} TCP timeout`);
+		let ontimeout = ()=> console.log(`${new Date().toUTCString()} TCP timeout`);
 
 		let onclose = () => {
 			TCP_state = DISCONNECTED;
 			ws_connection.close();
-			console.log(`${new Date()} TCP connection closed`);
+			console.log(`${new Date().toUTCString()} TCP connection closed`);
 		};
 
-		let onconnect = () => console.log(`${new Date()} TCP connection established`);
+		let onconnect = () => console.log(`${new Date().toUTCString()} TCP connection established`);
 
 		let onready = () => {
 			TCP_state = CONNECTED;
-			console.log(`${new Date()} TCP ready`);
+			console.log(`${new Date().toUTCString()} TCP ready`);
 		};
 
 		let socket = new createTcpSocket(ondata, onerror, ontimeout, onclose, onconnect, onready);
@@ -132,7 +132,7 @@ function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
             else                          socket.write(message.utf8Data);     // defaults to UTF-8       
          }
          else {
-            console.log(`${new Date()} can't send to TCP: not yet connected`);
+            console.log(`${new Date().toUTCString()} can't send to TCP: not yet connected`);
          }
    });
 
@@ -140,7 +140,7 @@ function createWsTunnel(tcpaddress,port,wsport,usestrings,name,key,cert) {
 			if(TCP_state == CONNECTED) {
 				socket.destroy();
 			}
-			console.log(`${new Date()} peer ${ws_connection.remoteAddress} disconnected`);
+			console.log(`${new Date().toUTCString()} peer ${ws_connection.remoteAddress} disconnected`);
 		});
 	});
 }
