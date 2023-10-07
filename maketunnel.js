@@ -65,7 +65,14 @@ function createHTTPxServer(wsport,key,cert) {
 		console.log(`${new Date().toUTCString()} Server is listening on port ${wsport}`);
 	});
 
-	server.on('clientError'     , (err, socket)=>console.log('clientError',err));
+	server.on('clientError', (err, socket)=>{
+		let msg = [ 
+			err.reason !== undefined ? `'${err.reason}'` : "",			
+			err.code !== undefined ? `(${err.code})` : "",			
+	 	].join(" ");
+		
+		console.log(`${new Date().toUTCString()} [${socket.remoteAddress}] client error ${msg}`);
+	});
 	return server;
 }
 
